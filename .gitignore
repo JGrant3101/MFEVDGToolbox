@@ -1,0 +1,13 @@
+*.asv
+*.obj
+*.exp
+*.csv
+*.mat
+*.jpg
+*.pdf
+*.jpeg
+*.png
+*.track
+*.json
+*.txt
+.vs/
