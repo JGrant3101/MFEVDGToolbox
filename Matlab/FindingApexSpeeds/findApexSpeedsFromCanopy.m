@@ -258,7 +258,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
         %% Remove points found on top of each other.
         % Start by forming all the points currently identified as apexes
         % into one array.
-        apexBoolean = cRLPointsBoolean + aSteerPointsBoolean + gLatPointsBoolean + kBoolean;
+        apexBoolean = cRLPointsBoolean + aSteerPointsBoolean + gLatPointsBoolean + kBoolean + vCarLocalMinsBoolean;
         % If anyy single points have been counted twice set they're value
         % to just 1.
         apexBoolean(apexBoolean > 1) = 1;
@@ -268,9 +268,9 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
         % Define the thresholds that determine whether an apex point is for
         % a new corner or not.
         vCarThreshold = 20;
-        aYawThreshold = 0.6;
+        aYawThreshold = 0.7;
         gLatThreshold = 9;
-        sLapThreshold = 100;
+        sLapThreshold = 150;
         kCLThreshold = 0.5;
 
         % Define the values of these parameters at the first apex point.
@@ -279,6 +279,9 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
         oldgLat = canopyData.gLat(apexIndices(1));
         oldsLap = canopyData.sLap(apexIndices(1));
         oldkCL = centreline.k(apexIndices(1));
+
+        % Initialise the index offset variable.
+        apexIndexOffset = 0;
 
         % For loop over each apex point found, starting from the second
         % one.
@@ -304,21 +307,30 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
             boolean3 = gLatDelta > gLatThreshold;
             boolean4 = sLapDelta > sLapThreshold;
             boolean5 = kCLDelta > kCLThreshold;
-            boolean6 = boolean2 && boolean5;
             boolean = boolean1 || boolean2 || boolean3 || boolean4;
 
             % If the boolean is false then point needs to be inspected.
             if ~boolean
                 % Run logic depending on which vCar value is smaller.
                 if newvCar < oldvCar
-                    apexBoolean(apexIndices(iApex - 1)) = 0;
+                    % Delete the previous apex point that is being replaced
+                    % for this corner.
+                    apexBoolean(apexIndices(iApex - 1 - apexIndexOffset)) = 0;
 
+                    % Update the parameter values for the apex point.
                     oldvCar = newvCar;
                     oldaYaw = newaYaw;
                     oldgLat = newgLat;
                     oldsLap = newsLap;
+
+                    % Reset the index offset value.
+                    apexIndexOffset = 0;
                 else
+                    % Remove the current apex point from the boolean list.
                     apexBoolean(apexIndices(iApex)) = 0;
+
+                    % Add 1 to the apexIndexOffset.
+                    apexIndexOffset = apexIndexOffset + 1;
                 end
             else
                 % If Boolean is true then simply define this point
@@ -327,39 +339,12 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
                 oldaYaw = newaYaw;
                 oldgLat = newgLat;
                 oldsLap = newsLap;
+
+                % Reset the index offset value.
+                apexIndexOffset = 0;
             end
         end
 
-        % Refind the apex indices after processing the boolean array/
-        apexIndices = find(apexBoolean);
-
-        % The points found by vCar are the most important so filter out
-        % other points if they're too close to these ones.
-        vCarIndices = find(vCarLocalMinsBoolean);
-        vCarsLap = canopyData.sLap(vCarLocalMinsBoolean);
-
-        % For loop over all apex Indices.
-        for j = 1:numel(apexIndices)
-            % Find the sLap at the apex Index.
-            apexsLap = canopyData.sLap(apexIndices(j));
-            % Find the difference between the index point and all
-            % vCarIndices.
-            sLapDiff = vCarsLap - apexsLap;
-            % Make these indexDiff values absolute.
-            sLapDiff = abs(sLapDiff);
-
-            % If any of these absolute values are less than 20 then remove
-            % the point.
-            [minsLapDiff, minsLapDiffIndex] = min(sLapDiff);
-
-            % Also find the centreline curvature
-            if minsLapDiff < 22 && (centreline.k(vCarIndices(minsLapDiffIndex)) > 0.005)
-                apexBoolean(apexIndices(j)) = 0;
-            end
-        end
-
-        % Add the vCar boolean array.
-        apexBoolean = apexBoolean + vCarLocalMinsBoolean;
         % At the end convert apexBoolean to a logical.
         apexBoolean = logical(apexBoolean);
 
@@ -373,7 +358,11 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
         legend('Racing Line', 'Centre Line', 'Apex Points')
         axis equal
 
-        
+        % Also plot the vCar trace with the kept points marked on.
+        figure
+        plot(canopyData.sLap, canopyData.vCar)
+        hold on
+        scatter(canopyData.sLap(apexBoolean), canopyData.vCar(apexBoolean))
         
         close all
     end
