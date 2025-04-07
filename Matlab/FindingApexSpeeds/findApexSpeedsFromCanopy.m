@@ -1,4 +1,4 @@
-function findApexSpeedsFromCanopy(canopyCSVFilepaths)
+function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
     % Function to find the apex speeds of each corner from a cell array of
     % .csv files containing data from Canopy simulations.
     % Define the number of tracks that have been passed in the input.
@@ -11,6 +11,11 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
 
     % Define the channels needed from the .csv file.
     requiredChannels = {'sLap', 'tRun', 'vCar', 'xCar', 'yCar', 'cRaceLine', 'aSteerWheel', 'gLat', 'aYaw'};
+
+    % Initialise the apexSpeeds struct.
+    apexSpeeds = struct();
+    % Initialise the allTracks field.
+    apexSpeeds.allTracks = [];
 
     % Enter into a for loop over each simulation.
     for i = 1:nTracks
@@ -175,85 +180,88 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
         % Plot the racing line with the points where the local mins have
         % been found marked as well to give a visual indicator of which
         % corners have been picked up.
-        figure
-        plot3(canopyData.xCar, -canopyData.yCar, canopyData.sLap)
-        hold on
-        plot3(centreline.xTrue, -centreline.yTrue, canopyData.sLap)
-        scatter3(canopyData.xCar(vCarLocalMinsBoolean), -canopyData.yCar(vCarLocalMinsBoolean), canopyData.sLap(vCarLocalMinsBoolean))
-        scatter3(canopyData.xCar(cRLPointsBoolean), -canopyData.yCar(cRLPointsBoolean), canopyData.sLap(cRLPointsBoolean))
-        scatter3(canopyData.xCar(aSteerPointsBoolean), -canopyData.yCar(aSteerPointsBoolean), canopyData.sLap(aSteerPointsBoolean))
-        scatter3(canopyData.xCar(gLatPointsBoolean), -canopyData.yCar(gLatPointsBoolean), canopyData.sLap(gLatPointsBoolean))
-        scatter3(canopyData.xCar(kBoolean), -canopyData.yCar(kBoolean), canopyData.sLap(kBoolean))
-        legend('vCar', 'centreline', 'vCar', 'RaceLine', 'aSteer', 'gLat', 'Curvature')
-        % legend('vCar', 'centreline', 'vCar', 'RaceLine', 'gLat', 'Curvature')
-        axis equal
-        view([0 90])
-
-        % Also plot the vCar trace with the local mins marked on.
-        figure
-        plot(canopyData.sLap, canopyData.vCar)
-        hold on
-        scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.vCar(vCarLocalMinsBoolean))
-        scatter(canopyData.sLap(cRLPointsBoolean), canopyData.vCar(cRLPointsBoolean))
-        scatter(canopyData.sLap(aSteerPointsBoolean), canopyData.vCar(aSteerPointsBoolean))
-        scatter(canopyData.sLap(gLatPointsBoolean), canopyData.vCar(gLatPointsBoolean))
-        scatter(canopyData.sLap(kBoolean), canopyData.vCar(kBoolean))
-        legend('vCar', 'vCar', 'RaceLine', 'aSteer', 'gLat', 'Curvature')
-
-        % Also plot the cRaceline, aSteerWheel and gLat channels.
-        figure
-        tiledlayout(9, 1)
-        nexttile
-        plot(canopyData.sLap, canopyData.cRaceLine)
-        ax1 = gca;
-        xlim1 = xlim(ax1);
-        hold on
-        scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.cRaceLine(vCarLocalMinsBoolean))
-        scatter(canopyData.sLap(cRLPointsBoolean), canopyData.cRaceLine(cRLPointsBoolean))
-        ylabel('cRaceLine')
-
-        nexttile
-        scatter(canopyData.sLap(cRLPointsBoolean), cRLPointsProminence(cRLPointsBoolean))
-        ax2 = gca;
-        xlim(ax2, xlim1)
-
-        nexttile
-        plot(canopyData.sLap, canopyData.aSteerWheel)
-        hold on
-        scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.aSteerWheel(vCarLocalMinsBoolean))
-        scatter(canopyData.sLap(aSteerPointsBoolean), canopyData.aSteerWheel(aSteerPointsBoolean))
-        ylabel('aSteerWheel')
-
-        nexttile
-        scatter(canopyData.sLap(aSteerPointsBoolean), aSteerPointsProminence(aSteerPointsBoolean))
-        ax2 = gca;
-        xlim(ax2, xlim1)
-
-        nexttile
-        plot(canopyData.sLap, canopyData.gLat)
-        hold on
-        scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.gLat(vCarLocalMinsBoolean))
-        scatter(canopyData.sLap(gLatPointsBoolean), canopyData.gLat(gLatPointsBoolean))
-        ylabel('gLat')
-
-        nexttile
-        scatter(canopyData.sLap(gLatPointsBoolean), gLatPointsProminence(gLatPointsBoolean))
-        ax2 = gca;
-        xlim(ax2, xlim1)
-
-        nexttile
-        plot(canopyData.sLap, centreline.k)
-        hold on
-        scatter(canopyData.sLap(vCarLocalMinsBoolean), centreline.k(vCarLocalMinsBoolean))
-        scatter(canopyData.sLap(kBoolean), centreline.k(kBoolean))
-
-        nexttile
-        scatter(canopyData.sLap(kBoolean), kProminence(kBoolean))
-        ax2 = gca;
-        xlim(ax2, xlim1)
-
-        nexttile
-        plot(canopyData.sLap, canopyData.aYaw)
+        if bPlot
+            figure
+            plot3(canopyData.xCar, -canopyData.yCar, canopyData.sLap)
+            hold on
+            plot3(centreline.xTrue, -centreline.yTrue, canopyData.sLap)
+            scatter3(canopyData.xCar(vCarLocalMinsBoolean), -canopyData.yCar(vCarLocalMinsBoolean), canopyData.sLap(vCarLocalMinsBoolean))
+            scatter3(canopyData.xCar(cRLPointsBoolean), -canopyData.yCar(cRLPointsBoolean), canopyData.sLap(cRLPointsBoolean))
+            scatter3(canopyData.xCar(aSteerPointsBoolean), -canopyData.yCar(aSteerPointsBoolean), canopyData.sLap(aSteerPointsBoolean))
+            scatter3(canopyData.xCar(gLatPointsBoolean), -canopyData.yCar(gLatPointsBoolean), canopyData.sLap(gLatPointsBoolean))
+            scatter3(canopyData.xCar(kBoolean), -canopyData.yCar(kBoolean), canopyData.sLap(kBoolean))
+            legend('vCar', 'centreline', 'vCar', 'RaceLine', 'aSteer', 'gLat', 'Curvature')
+            % legend('vCar', 'centreline', 'vCar', 'RaceLine', 'gLat', 'Curvature')
+            axis equal
+            view([0 90])
+    
+            % Also plot the vCar trace with the local mins marked on.
+            figure
+            plot(canopyData.sLap, canopyData.vCar)
+            hold on
+            scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.vCar(vCarLocalMinsBoolean))
+            scatter(canopyData.sLap(cRLPointsBoolean), canopyData.vCar(cRLPointsBoolean))
+            scatter(canopyData.sLap(aSteerPointsBoolean), canopyData.vCar(aSteerPointsBoolean))
+            scatter(canopyData.sLap(gLatPointsBoolean), canopyData.vCar(gLatPointsBoolean))
+            scatter(canopyData.sLap(kBoolean), canopyData.vCar(kBoolean))
+            legend('vCar', 'vCar', 'RaceLine', 'aSteer', 'gLat', 'Curvature')
+    
+            % Also plot the cRaceline, aSteerWheel and gLat channels.
+            figure
+            tiledlayout(9, 1)
+            nexttile
+            plot(canopyData.sLap, canopyData.cRaceLine)
+            ax1 = gca;
+            xlim1 = xlim(ax1);
+            hold on
+            scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.cRaceLine(vCarLocalMinsBoolean))
+            scatter(canopyData.sLap(cRLPointsBoolean), canopyData.cRaceLine(cRLPointsBoolean))
+            ylabel('cRaceLine')
+    
+            nexttile
+            scatter(canopyData.sLap(cRLPointsBoolean), cRLPointsProminence(cRLPointsBoolean))
+            ax2 = gca;
+            xlim(ax2, xlim1)
+    
+            nexttile
+            plot(canopyData.sLap, canopyData.aSteerWheel)
+            hold on
+            scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.aSteerWheel(vCarLocalMinsBoolean))
+            scatter(canopyData.sLap(aSteerPointsBoolean), canopyData.aSteerWheel(aSteerPointsBoolean))
+            ylabel('aSteerWheel')
+    
+            nexttile
+            scatter(canopyData.sLap(aSteerPointsBoolean), aSteerPointsProminence(aSteerPointsBoolean))
+            ax2 = gca;
+            xlim(ax2, xlim1)
+    
+            nexttile
+            plot(canopyData.sLap, canopyData.gLat)
+            hold on
+            scatter(canopyData.sLap(vCarLocalMinsBoolean), canopyData.gLat(vCarLocalMinsBoolean))
+            scatter(canopyData.sLap(gLatPointsBoolean), canopyData.gLat(gLatPointsBoolean))
+            ylabel('gLat')
+    
+            nexttile
+            scatter(canopyData.sLap(gLatPointsBoolean), gLatPointsProminence(gLatPointsBoolean))
+            ax2 = gca;
+            xlim(ax2, xlim1)
+    
+            nexttile
+            plot(canopyData.sLap, centreline.k)
+            hold on
+            scatter(canopyData.sLap(vCarLocalMinsBoolean), centreline.k(vCarLocalMinsBoolean))
+            scatter(canopyData.sLap(kBoolean), centreline.k(kBoolean))
+    
+            nexttile
+            scatter(canopyData.sLap(kBoolean), kProminence(kBoolean))
+            ax2 = gca;
+            xlim(ax2, xlim1)
+            ylim([0, 0.07])
+    
+            nexttile
+            plot(canopyData.sLap, canopyData.aYaw)
+        end
 
         %% Remove points found on top of each other.
         % Start by forming all the points currently identified as apexes
@@ -269,16 +277,22 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
         % a new corner or not.
         vCarThreshold = 20;
         aYawThreshold = 0.7;
+        aSteerThreshold = 1.5;
         gLatThreshold = 9;
         sLapThreshold = 150;
-        kCLThreshold = 0.5;
+        kCLPromThreshold = 0.025;
+
+        % Define a vCar limit, above which we no longer class as a corner.
+        vCarLimit = 185 / 3.6;
 
         % Define the values of these parameters at the first apex point.
         oldvCar = canopyData.vCar(apexIndices(1));
         oldaYaw = canopyData.aYaw(apexIndices(1));
+        oldaSteer = canopyData.aSteerWheel(apexIndices(1));
         oldgLat = canopyData.gLat(apexIndices(1));
         oldsLap = canopyData.sLap(apexIndices(1));
         oldkCL = centreline.k(apexIndices(1));
+        oldkCLProm = kProminence(apexIndices(1));
 
         % Initialise the index offset variable.
         apexIndexOffset = 0;
@@ -289,25 +303,29 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
             % Define the values of the parameters at the new apex point.
             newvCar = canopyData.vCar(apexIndices(iApex));
             newaYaw = canopyData.aYaw(apexIndices(iApex));
+            newaSteer = canopyData.aSteerWheel(apexIndices(iApex));
             newgLat = canopyData.gLat(apexIndices(iApex));
             newsLap = canopyData.sLap(apexIndices(iApex));
             newkCL = centreline.k(apexIndices(iApex));
+            newkCLProm = kProminence(apexIndices(iApex));
 
             % Find the deltas in each parameter
             vCarDelta = abs(newvCar - oldvCar);
             aYawDelta = abs(newaYaw - oldaYaw);
+            aSteerDelta = abs(newaSteer - oldaSteer);
             gLatDelta = abs(newgLat - oldgLat);
             sLapDelta = abs(newsLap - oldsLap);
             kCLDelta = abs(newkCL - oldkCL);
+            kCLPromDelta = abs(newkCLProm - oldkCLProm);
 
             % Form the boolean that determines if the new apex point is
             % differenet enough from the old one to be a new corner or not.
             boolean1 = vCarDelta > vCarThreshold;
-            boolean2 = aYawDelta > aYawThreshold;
+            boolean2 = (aYawDelta > aYawThreshold) && ~((sLapDelta < 13) && (aSteerDelta < 2));
             boolean3 = gLatDelta > gLatThreshold;
             boolean4 = sLapDelta > sLapThreshold;
-            boolean5 = kCLDelta > kCLThreshold;
-            boolean = boolean1 || boolean2 || boolean3 || boolean4;
+            boolean5 = (kCLPromDelta > kCLPromThreshold) && (kCLDelta > kCLPromThreshold) && (min([newkCL, oldkCL]) < 0.001) && (sLapDelta < 8);
+            boolean = (boolean1 || boolean2 || boolean3 || boolean4 || boolean5) && (newvCar < vCarLimit);
 
             % If the boolean is false then point needs to be inspected.
             if ~boolean
@@ -320,8 +338,11 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
                     % Update the parameter values for the apex point.
                     oldvCar = newvCar;
                     oldaYaw = newaYaw;
+                    oldaSteer = newaSteer;
                     oldgLat = newgLat;
                     oldsLap = newsLap;
+                    oldkCL = newkCL;
+                    oldkCLProm = newkCLProm;
 
                     % Reset the index offset value.
                     apexIndexOffset = 0;
@@ -337,8 +358,11 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
                 % as the old point and move to the next point.
                 oldvCar = newvCar;
                 oldaYaw = newaYaw;
+                oldaSteer = newaSteer;
                 oldgLat = newgLat;
                 oldsLap = newsLap;
+                oldkCL = newkCL;
+                oldkCLProm = newkCLProm;
 
                 % Reset the index offset value.
                 apexIndexOffset = 0;
@@ -350,20 +374,66 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths)
 
         % At the end of the processing plot all the kept points on the
         % track map to see where they are.
-        figure
-        plot(canopyData.xCar, -canopyData.yCar)
-        hold on
-        plot(centreline.xTrue, -centreline.yTrue)
-        scatter(canopyData.xCar(apexBoolean), -canopyData.yCar(apexBoolean))
-        legend('Racing Line', 'Centre Line', 'Apex Points')
-        axis equal
+        if bPlot
+            figure
+            plot(canopyData.xCar, -canopyData.yCar)
+            hold on
+            plot(centreline.xTrue, -centreline.yTrue)
+            scatter(canopyData.xCar(apexBoolean), -canopyData.yCar(apexBoolean))
+            legend('Racing Line', 'Centre Line', 'Apex Points')
+            axis equal
+    
+            % Also plot the vCar trace with the kept points marked on.
+            figure
+            plot(canopyData.sLap, canopyData.vCar)
+            hold on
+            scatter(canopyData.sLap(apexBoolean), canopyData.vCar(apexBoolean))
+            
+            close all
+        end
 
-        % Also plot the vCar trace with the kept points marked on.
-        figure
-        plot(canopyData.sLap, canopyData.vCar)
-        hold on
-        scatter(canopyData.sLap(apexBoolean), canopyData.vCar(apexBoolean))
-        
-        close all
+        %% Collecting results.
+        % Convert the apex speeds to kph.
+        apexSpeedsKPH = canopyData.vCar(apexBoolean) * 3.6;
+        % Removing all above 185 kph.
+        apexSpeedsKPH(apexSpeedsKPH > 185) = [];
+        % Assign it to the track specific field in apexSpeeds.
+        apexSpeeds.(trackCodes{i}) = apexSpeedsKPH;
+        % Adding these speeds to the allTracks field.
+        apexSpeeds.allTracks = [apexSpeeds.allTracks; apexSpeedsKPH];
     end
+    % Define bin edge values for a histogram.
+    binEdges = 40:3:181;
+
+    % Plot a histogram.
+    histogram(apexSpeeds.allTracks, binEdges)
+
+    % Find the IQR for the data.
+    apexSpeedQuantiles = quantile(apexSpeeds.allTracks, [0.1, 0.25, 0.33, 0.5, 0.66, 0.75, 0.9]);
+    disp(apexSpeedQuantiles)
+
+    % Find the number of corners.
+    nCorners = numel(apexSpeeds.allTracks);
+
+    % Define the corner gatings.
+    cornerGatings = [70, 90, 120];
+    percentageOfCorners = zeros(numel(cornerGatings) + 1, 1);
+    
+    % Find the percentage of corners in each gating.
+    for i = 1:numel(cornerGatings)
+        if i == 1
+            nCornersGated = sum(apexSpeeds.allTracks < cornerGatings(i));
+            percentageOfCorners(i) = (nCornersGated / nCorners) * 100;
+        elseif i == numel(cornerGatings)
+            nCornersGated = sum((cornerGatings(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatings(i)));
+            percentageOfCorners(i) = (nCornersGated / nCorners) * 100;
+
+            nCornersGated = sum(apexSpeeds.allTracks > cornerGatings(i));
+            percentageOfCorners(i + 1) = (nCornersGated / nCorners) * 100;
+        else
+            nCornersGated = sum((cornerGatings(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatings(i)));
+            percentageOfCorners(i) = (nCornersGated / nCorners) * 100;
+        end
+    end
+    disp(percentageOfCorners)
 end
