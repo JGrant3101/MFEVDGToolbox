@@ -7,10 +7,14 @@ import numpy as np
 import json
 
 # Define the filepath of an example track .json file to start with.
-trackJSONFilepath = 'C:\\Users\\joe.grant\\Repos\\Canopy-API\\Tracks\\S11R05_MIA.json'
+trackJSONFilepath = 'C:\\Users\\joe.grant\\Repos\\MFEVDGToolbox\\Python\\SeasonSummaryUserMaths\\Tracks\\S11R08_TKO_POIs.json'
 
-# Open the JSON file
-trackJSON = open(trackJSONFilepath, 'r')
+# Read in the JSON file.
+with open(trackJSONFilepath, 'r') as trackJSON:
+    trackData = json.load(trackJSON)
 
-# Read in the track json file.
-trackData = json.load(trackJSON)
+# Extract the track config from the trackData dictionary.
+trackConfig = trackData['config']
+
+# Extract the track POIs from the trackConfig dictionary.
+trackPOIs = trackConfig['userPOIs']['points']
