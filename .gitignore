@@ -10,6 +10,5 @@
 *.track
 *.json
 *.txt
-venv/
-.venv/
+**/.venv/
 .vs/
