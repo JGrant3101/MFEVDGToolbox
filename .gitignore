@@ -11,4 +11,5 @@
 *.json
 *.txt
 venv/
+.venv/
 .vs/
