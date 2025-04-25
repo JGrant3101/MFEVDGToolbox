@@ -11,5 +11,5 @@
 *.json
 *.txt
 **/.venv/
-_pycache_/
+**/SeasonSummaryUserMaths/__pycache__/*
 .vs/
