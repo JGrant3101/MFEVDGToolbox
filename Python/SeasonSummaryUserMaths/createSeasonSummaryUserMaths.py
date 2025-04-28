@@ -5,14 +5,16 @@
 # Start by importing the required libraries.
 import numpy as np
 import json
+import copy
 
 # Then import any required functions
-from createChannelsList import createChannelsList
+from createBooleanChannelsList import createBooleanChannelsList
+from createResultDefinitions import createResultDefinitions
 
 # Let's just define a dummy required number of zones for now.
 numberOfZones = 5
 
-# Start by initialising the userMaths dictionary.
+# Intialise the userMaths dictionary.
 userMathsDict = {}
 
 # Assign the sim version.
@@ -38,11 +40,26 @@ for i in range(0, numberOfZones + 11):
         else:
             booleanNames[i] = 'bZ' + str(i - 11)
 
-# Creating the channels dictionary for the vector part of config using the sub-function that's been defined.
-channelsDict = createChannelsList(5, booleanNames)
+# Create a dictionary for the boolean vector channels.
+vectorResultDefinitions = createBooleanChannelsList(5, booleanNames)
+
+# Create a dictionary for the vector and scalar result definitions.
+# Importing the base user maths file.
+baselineUsermathsJSONFilepath = 'C:\\Users\\joe.grant\\Repos\\MFEVDGToolbox\\Python\\SeasonSummaryUserMaths\\UserMaths\\BaslineUserMaths.json'
+
+# Read in the JSON file.
+with open(baselineUsermathsJSONFilepath, 'r') as baselineUsermathsJSON:
+    baselinseUsermathsData = json.load(baselineUsermathsJSON)
+
+# Create the vector and scalar result definitons from the baseline user maths file.
+scalarResultDefinitions, additionalVectorResultDefinitions = createResultDefinitions(baselinseUsermathsData, booleanNames, numberOfZones)
+
+# Append the baseline vector result definitions onto the boolean channels dictionary.
+vectorResultDefinitions.extend(additionalVectorResultDefinitions)
 
 # Assigning this channels dictionary to the config dictionary.
-configDict['vectors'] = {'channels' : channelsDict}
+configDict['vectors'] = {'channels' : vectorResultDefinitions}
+configDict['scalars'] = {'scalarResultDefinitions' : scalarResultDefinitions}
 
 # Assigning the config dictionary to the config key in UserMathsDict.
 userMathsDict['config'] = configDict

@@ -1,6 +1,6 @@
-# Function to produce the list pf dictionaries for the sectors and loops.
+# Function to produce the list of vector boolean channel definitions
 
-def createChannelsList(n, names):
+def createBooleanChannelsList(n, names):
     # Calculate the number of gating boolean channels that will need to be defined.
     nBooleans = n + 11
     # Initialise the list that will be populated with the dictionaries.
