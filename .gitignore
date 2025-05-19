@@ -10,6 +10,6 @@
 *.track
 *.json
 *.txt
-venv/
-.venv/
+**/.venv/
+**/SeasonSummaryUserMaths/__pycache__/*
 .vs/

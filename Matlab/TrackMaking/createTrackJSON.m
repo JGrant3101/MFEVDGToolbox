@@ -186,7 +186,7 @@ function createTrackJSON(varargin)
         name = 'S11R05_MIA';
     elseif contains(filepath, 'MCO')
         name = 'S11R06_MCO';
-    elseif contains(filepath, 'TKO')
+    elseif contains(filepath, 'TKO') || contains(filepath, 'TOK')
         name = 'S11R08_TKO';
     elseif contains(filepath, 'SHA')
         name = 'S11R010_SHA';
