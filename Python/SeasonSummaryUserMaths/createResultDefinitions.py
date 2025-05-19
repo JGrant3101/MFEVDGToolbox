@@ -2,18 +2,18 @@
 
 import copy
 
-def createResultDefinitions(baselineData, booleanNames, nZones):
+def createResultDefinitions(baselineData, booleanNames, nBooleans):
     # Extract the vector and scalar result definitions from the baseline user maths.
     vectorResultDefinitions = baselineData['config']['vectors']['channels']
     zoneScalarResultDefinitions = baselineData['config']['scalars']['scalarResultDefinitions']
 
     # Intialise an empty list to populate with the scalar results definitions for each zone.
-    scalarResultDefinitions = [None] * (11 + nZones) * 2
+    scalarResultDefinitions = [None] * nBooleans * 2
 
     # Define the number of scalar result definitions.
     nDefinitions = len(zoneScalarResultDefinitions[0]['channelsAndResults'])
 
-    for i in range(0, nZones + 11):
+    for i in range(0, nBooleans):
         # Create a temporary version of the zone scalar result definitions to manipulate and assign later.
         temp = copy.deepcopy(zoneScalarResultDefinitions)
 

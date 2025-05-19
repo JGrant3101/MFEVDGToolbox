@@ -9,6 +9,7 @@ from createResultDefinitions import createResultDefinitions
 
 # Let's just define a dummy required number of zones for now.
 numberOfZones = 5
+numberOfBooleans = numberOfZones + 11
 
 # Initialise the userMaths dictionary.
 userMathsDict = {}
@@ -21,9 +22,9 @@ userMathsDict['customProperties'] = {}
 configDict = {}
 
 # Define the list of names for the vector boolean channels that will determine what sector (I1, I2 or I3), loop (L0, L1, L2 ...) and turn zone (Z0, Z1, Z2 ...) the car is in.
-booleanNames = [None] * (numberOfZones + 11)
+booleanNames = [None] * numberOfBooleans
 
-for i in range(0, numberOfZones + 11):
+for i in range(0, numberOfBooleans):
         if i < 3:
             booleanNames[i] = 'bI' + str(i + 1)
         elif i > 2 and i < 11:
@@ -32,7 +33,7 @@ for i in range(0, numberOfZones + 11):
             booleanNames[i] = 'bZ' + str(i - 11)
 
 # Create a dictionary for the boolean vector channels.
-vectorResultDefinitions = createBooleanChannelsList(numberOfZones, booleanNames)
+vectorResultDefinitions = createBooleanChannelsList(numberOfBooleans, booleanNames)
 
 # Importing the base user maths file.
 baselineUsermathsJSONFilepath = 'C:\\Users\\joe.grant\\Repos\\MFEVDGToolbox\\Python\\SeasonSummaryUserMaths\\UserMaths\\BaslineUserMaths.json'
@@ -42,7 +43,7 @@ with open(baselineUsermathsJSONFilepath, 'r') as baselineUsermathsJSON:
     baselinseUsermathsData = json.load(baselineUsermathsJSON)
 
 # Create the vector and scalar result definitons from the baseline user maths file.
-scalarResultDefinitions, additionalVectorResultDefinitions = createResultDefinitions(baselinseUsermathsData, booleanNames, numberOfZones)
+scalarResultDefinitions, additionalVectorResultDefinitions = createResultDefinitions(baselinseUsermathsData, booleanNames, numberOfBooleans)
 
 # Append the vector result definitions created from the user maths baseline onto the boolean channels list.
 vectorResultDefinitions.extend(additionalVectorResultDefinitions)

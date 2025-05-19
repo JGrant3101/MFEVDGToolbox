@@ -1,8 +1,6 @@
 # Function to produce the list of vector boolean channel definitions
 
-def createBooleanChannelsList(n, names):
-    # Calculate the number of gating boolean channels that will need to be defined.
-    nBooleans = n + 11
+def createBooleanChannelsList(nBooleans, names):
     # Initialise the list that will be populated with the dictionaries.
     channels = [None] * nBooleans
 
