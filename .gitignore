@@ -7,9 +7,12 @@
 *.pdf
 *.jpeg
 *.png
+*.webp
 *.track
 *.json
 *.txt
+*.mp4
+*.gif
 venv/
 .venv/
 **/SeasonSummaryUserMaths/__pycache__/*

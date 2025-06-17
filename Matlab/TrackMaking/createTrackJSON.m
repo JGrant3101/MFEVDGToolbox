@@ -237,16 +237,16 @@ function createTrackJSON(varargin)
     end
     
     % Set the sim version.
-    track.simVersion = '1.11888';
+    track.simVersion = '1.12193';
 
     % Set the custom properties.
     customProperties = struct();
     customProperties.ERaceTotalFIA = 38.5;
-    customProperties.NLapsFIA = 28;
-    customProperties.S09T300 = 1.375;
-    customProperties.S09TAmbAvg = 26.8;
+    customProperties.NLapsFIA = 38;
+    customProperties.S09T300 = 1.013;
+    customProperties.S09TAmbAvg = 29.8;
     customProperties.S09pAmbAvg = 1013;
-    customProperties.S09rHumAvg = 67;
+    customProperties.S09rHumAvg = 81;
 
     track.customProperties = customProperties;
 

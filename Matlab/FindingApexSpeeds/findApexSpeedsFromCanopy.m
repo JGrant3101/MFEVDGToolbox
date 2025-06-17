@@ -1,4 +1,4 @@
-function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
+function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot, bSave)
     % Function to find the apex speeds of each corner from a cell array of
     % .csv files containing data from Canopy simulations.
     % Define the number of tracks that have been passed in the input.
@@ -10,7 +10,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
     centrelineFilepaths = cellfun(@(x) [x, 'Centreline.csv'], trackCodes, 'UniformOutput', false);
 
     % Define the channels needed from the .csv file.
-    requiredChannels = {'sLap', 'tRun', 'vCar', 'xCar', 'yCar', 'cRaceLine', 'aSteerWheel', 'gLat', 'aYaw'};
+    requiredChannels = {'sLap', 'tRun', 'vCar', 'xCar', 'yCar', 'cRaceLine', 'aSteerWheel', 'gLat', 'aYaw', 'gLong'};
 
     % Initialise the apexSpeeds struct.
     apexSpeeds = struct();
@@ -29,46 +29,30 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
 
         % Read in the centreline values.
         centreline = readCanopyCSV(centrelineFilepath, {'RacingLine_xCentreLine', 'RacingLine_yCentreLine', 'RacingLine_sLapCentreLine'});
-        % For some reason the SHA centreline has come out weirdly so need
-        % to mainpulate that, for any other circuit just assign the values.
-        if strcmp(uniqueCode, 'SHA')
-            % Assign temporary x and y arrays.
-            x = -centreline.RacingLine_xCentreLine;
-            y = -centreline.RacingLine_yCentreLine;
+        centreline.x = centreline.RacingLine_xCentreLine;
+        centreline.y = centreline.RacingLine_yCentreLine;
 
-            % Find angle of start finish straight from the racing line and
-            % the centre line.
-            aSFRacingLine = atan((canopyData.yCar(2) - canopyData.yCar(1)) / (canopyData.xCar(2) - canopyData.xCar(1)));
-            aSFCentreLine = atan((y(2) - y(1)) / (x(2) - x(1)));
+        % If the track is Jeddah rotate the track.
+        if strcmp(uniqueCode, 'JED')
+            % Define the rotation angle.
+            rotAngle = -1.2;
+            % Construct the rotation matrix.
+            rotMat = [cos(rotAngle), -sin(rotAngle); sin(rotAngle), cos(rotAngle)];
+            
+            % Perform the rotation.
+            carPosition = [canopyData.xCar, -canopyData.yCar];
+            carCentreline = [centreline.x, -centreline.y];
 
-            % Define the required angle of rotation.
-            aRot = aSFCentreLine - aSFRacingLine;
+            carPositionRot = carPosition * rotMat;
+            carCentrelineRot = carCentreline * rotMat;
 
-            % Put the first point of the centreline at the origin, storing
-            % it's coordinate.
-            centreLineFirstPoint = [x(1), y(1)];
-            temp = [x - centreLineFirstPoint(1), y - centreLineFirstPoint(2)];
-
-            % Define a rotation matrix.
-            rotMatrix = [cos(aRot), -sin(aRot); sin(aRot), cos(aRot)];
-
-            % Rotate the centreline.
-            newCentreline = temp * rotMatrix;
-
-            % Translate the centreline back.
-            newCentreline = newCentreline + centreLineFirstPoint;
-
-            % Further translation.
-            newCentreline(:, 1) = newCentreline(:, 1) - 190;
-
-            % Assign to the correct fields in the centreline struct.
-            centreline.x = newCentreline(:, 1);
-            centreline.y = newCentreline(:, 2);
-        else
-            centreline.x = centreline.RacingLine_xCentreLine;
-            centreline.y = centreline.RacingLine_yCentreLine;
+            % Reassign the rotated points.
+            canopyData.xCar = carPositionRot(:, 1);
+            canopyData.yCar = -carPositionRot(:, 2);
+            centreline.x = carCentrelineRot(:, 1);
+            centreline.y = -carCentrelineRot(:, 2);
         end
-
+        
         % Resample the centreline onto the sLap vector from canopyData by
         % finding the centreline point closest to each racing line point.
         for j = 1:numel(canopyData.sLap)
@@ -152,7 +136,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
         aSteerPointsProminence = aSteerMinProminence + aSteerMaxProminence;
 
         % Getting rid of the points with less than 0.1 prominence.
-        aSteerPointsBoolean(aSteerPointsProminence < 0.1) = 0;
+        aSteerPointsBoolean(aSteerPointsProminence < 0.078) = 0;
         % Getting rid of the points with less than 0.2 abs(aSteerWheel).
         aSteerPointsBoolean(abs(canopyData.aSteerWheel) < 0.2) = 0;
         % Getting rid of the points with less than 40 vCar and that are decelerating.
@@ -161,7 +145,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
         % Getting rid of the points with less than 9 abs(gLat).
         aSteerPointsBoolean(abs(canopyData.gLat) < 9) = 0;
         % Getting rid of the points with less than 0.005 centreline curvature.
-        aSteerPointsBoolean(centreline.k < 0.0045) = 0;
+        aSteerPointsBoolean(centreline.k < 0.0082) = 0;
 
         %% Process based on gLat
         % Find all the local mins and max points in aSteerWheel
@@ -174,7 +158,13 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
         % Getting rid of the points with less than 1 prominence.
         gLatPointsBoolean(gLatPointsProminence < 15) = 0;
         % Getting rid of the points with less than 0.005 centreline curvature.
-        gLatPointsBoolean(centreline.k < 0.005) = 0;
+        gLatPointsBoolean(centreline.k < 0.006) = 0;
+
+        % Hardcode in JAK T17 point
+        switch uniqueCode
+            case 'JAK'
+                gLatPointsBoolean(1230) = 1;
+        end
 
         %% Plots
         % Plot the racing line with the points where the local mins have
@@ -208,7 +198,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
     
             % Also plot the cRaceline, aSteerWheel and gLat channels.
             figure
-            tiledlayout(9, 1)
+            tiledlayout(10, 1)
             nexttile
             plot(canopyData.sLap, canopyData.cRaceLine)
             ax1 = gca;
@@ -252,6 +242,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
             hold on
             scatter(canopyData.sLap(vCarLocalMinsBoolean), centreline.k(vCarLocalMinsBoolean))
             scatter(canopyData.sLap(kBoolean), centreline.k(kBoolean))
+            ylabel('kCentreline')
     
             nexttile
             scatter(canopyData.sLap(kBoolean), kProminence(kBoolean))
@@ -267,7 +258,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
         % Start by forming all the points currently identified as apexes
         % into one array.
         apexBoolean = cRLPointsBoolean + aSteerPointsBoolean + gLatPointsBoolean + kBoolean + vCarLocalMinsBoolean;
-        % If anyy single points have been counted twice set they're value
+        % If any single points have been counted twice set they're value
         % to just 1.
         apexBoolean(apexBoolean > 1) = 1;
         % Find the index values.
@@ -281,6 +272,7 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
         gLatThreshold = 9;
         sLapThreshold = 150;
         kCLPromThreshold = 0.025;
+        kCLThreshold = 0.029;
 
         % Define a vCar limit, above which we no longer class as a corner.
         vCarLimit = 185 / 3.6;
@@ -321,10 +313,10 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
             % Form the boolean that determines if the new apex point is
             % differenet enough from the old one to be a new corner or not.
             boolean1 = vCarDelta > vCarThreshold;
-            boolean2 = (aYawDelta > aYawThreshold) && ~((sLapDelta < 13) && (aSteerDelta < 2));
+            boolean2 = (aYawDelta > aYawThreshold) && ~((sLapDelta < 12.5) && (aSteerDelta < 2));
             boolean3 = gLatDelta > gLatThreshold;
             boolean4 = sLapDelta > sLapThreshold;
-            boolean5 = (kCLPromDelta > kCLPromThreshold) && (kCLDelta > kCLPromThreshold) && (min([newkCL, oldkCL]) < 0.001) && (sLapDelta < 8);
+            boolean5 = (kCLPromDelta > kCLPromThreshold) && (kCLDelta > kCLThreshold) && (min([newkCL, oldkCL]) < 0.01) && (sLapDelta < 12.3) && (gLatDelta < 3);
             boolean = (boolean1 || boolean2 || boolean3 || boolean4 || boolean5) && (newvCar < vCarLimit);
 
             % If the boolean is false then point needs to be inspected.
@@ -369,71 +361,178 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot)
             end
         end
 
+        % Manually remove certain false positives that sneak through the
+        % logic with a switch case statement.
+        switch uniqueCode
+            case 'JED'
+                apexBoolean(330) = 0;
+            case 'MCO'
+                apexBoolean(606) = 0;
+                apexBoolean(673) = 0;
+                apexBoolean(1282) = 0;
+                apexBoolean(1683) = 0;
+                apexBoolean(1835) = 0;
+            case 'SHA'
+                apexBoolean(606) = 0;
+        end
+
         % At the end convert apexBoolean to a logical.
         apexBoolean = logical(apexBoolean);
 
         % At the end of the processing plot all the kept points on the
         % track map to see where they are.
-        if bPlot
-            figure
-            plot(canopyData.xCar, -canopyData.yCar)
-            hold on
-            plot(centreline.xTrue, -centreline.yTrue)
-            scatter(canopyData.xCar(apexBoolean), -canopyData.yCar(apexBoolean))
-            legend('Racing Line', 'Centre Line', 'Apex Points')
-            axis equal
-    
+        if bPlot  
             % Also plot the vCar trace with the kept points marked on.
             figure
             plot(canopyData.sLap, canopyData.vCar)
             hold on
             scatter(canopyData.sLap(apexBoolean), canopyData.vCar(apexBoolean))
+
+            % And finally plot the gLong trace with the kept points marked
+            % on.
+            figure
+            tiledlayout(2, 1)
+            nexttile
+            plot(canopyData.sLap, canopyData.gLong)
+            hold on
+            scatter(canopyData.sLap(apexBoolean), canopyData.gLong(apexBoolean))
+
+            nexttile
+            plot(canopyData.sLap, canopyData.gLat)
+            hold on
+            scatter(canopyData.sLap(apexBoolean), canopyData.gLat(apexBoolean))
+
+            figure
+            plot3(canopyData.xCar, -canopyData.yCar, canopyData.sLap)
+            hold on
+            plot3(centreline.xTrue, -centreline.yTrue, canopyData.sLap)
+            scatter3(canopyData.xCar(apexBoolean), -canopyData.yCar(apexBoolean), canopyData.sLap(apexBoolean))
+            legend('Racing Line', 'Centre Line', 'Apex Points')
+            axis equal
+            view([0 90])
             
             close all
         end
 
-        %% Collecting results.
+        %% Save output for each circuit.
+        % If the user selects to then save the vCar (in kph), sLap, xCar,
+        % yCar.
+        if bSave
+            % Create the struct to save.
+            apexPoints = struct();
+            apexPoints.sLap = canopyData.sLap(apexBoolean);
+            apexPoints.vCarKPH = canopyData.vCar(apexBoolean) * 3.6;
+            apexPoints.xCar = canopyData.xCar(apexBoolean);
+            apexPoints.yCar = -canopyData.yCar(apexBoolean);
+    
+            % Save the struct.
+            save(uniqueCode, 'apexPoints')
+        end
+
+        %% Collect results.
         % Convert the apex speeds to kph.
         apexSpeedsKPH = canopyData.vCar(apexBoolean) * 3.6;
-        % Removing all above 185 kph.
-        apexSpeedsKPH(apexSpeedsKPH > 185) = [];
         % Assign it to the track specific field in apexSpeeds.
         apexSpeeds.(trackCodes{i}) = apexSpeedsKPH;
         % Adding these speeds to the allTracks field.
         apexSpeeds.allTracks = [apexSpeeds.allTracks; apexSpeedsKPH];
     end
     % Define bin edge values for a histogram.
-    binEdges = 40:3:181;
+    binEdges = 40:5:185;
 
     % Plot a histogram.
     histogram(apexSpeeds.allTracks, binEdges)
 
     % Find the IQR for the data.
-    apexSpeedQuantiles = quantile(apexSpeeds.allTracks, [0.1, 0.25, 0.33, 0.5, 0.66, 0.75, 0.9]);
+    apexSpeedQuantiles = quantile(apexSpeeds.allTracks, [0.25, 0.5, 0.75]);
     disp(apexSpeedQuantiles)
 
     % Find the number of corners.
     nCorners = numel(apexSpeeds.allTracks);
 
     % Define the corner gatings.
-    cornerGatings = [70, 90, 120];
+    cornerGatings = [60, 110, 150];
+    cornerGatingsOptionAOld = [70, 95, 155];
+    cornerGatingsOptionAPotential = [70, 90, 150];
+    cornerGatingsOptionBOld = [65, 80, 110];
+    cornerGatingsOptionBNew = [65, 80, 105];
+
     percentageOfCorners = zeros(numel(cornerGatings) + 1, 1);
+    percentageOfCornersOptionAOld = zeros(numel(cornerGatings) + 1, 1);
+    percentageOfCornersOptionAPotential = zeros(numel(cornerGatings) + 1, 1);
+    percentageOfCornersOptionBOld = zeros(numel(cornerGatings) + 1, 1);
+    percentageOfCornersOptionBNew = zeros(numel(cornerGatings) + 1, 1);
     
     % Find the percentage of corners in each gating.
     for i = 1:numel(cornerGatings)
         if i == 1
             nCornersGated = sum(apexSpeeds.allTracks < cornerGatings(i));
+            nCornersGatedOptionAOld = sum(apexSpeeds.allTracks < cornerGatingsOptionAOld(i));
+            nCornersGatedOptionAPotential = sum(apexSpeeds.allTracks < cornerGatingsOptionAPotential(i));
+            nCornersGatedOptionBOld = sum(apexSpeeds.allTracks < cornerGatingsOptionBOld(i));
+            nCornersGatedOptionBNew = sum(apexSpeeds.allTracks < cornerGatingsOptionBNew(i));
+            
             percentageOfCorners(i) = (nCornersGated / nCorners) * 100;
+            percentageOfCornersOptionAOld(i) = (nCornersGatedOptionAOld / nCorners) * 100;
+            percentageOfCornersOptionAPotential(i) = (nCornersGatedOptionAPotential / nCorners) * 100;
+            percentageOfCornersOptionBOld(i) = (nCornersGatedOptionBOld / nCorners) * 100;
+            percentageOfCornersOptionBNew(i) = (nCornersGatedOptionBNew / nCorners) * 100;
         elseif i == numel(cornerGatings)
             nCornersGated = sum((cornerGatings(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatings(i)));
+            nCornersGatedOptionAOld = sum((cornerGatingsOptionAOld(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionAOld(i)));
+            nCornersGatedOptionAPotential = sum((cornerGatingsOptionAPotential(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionAPotential(i)));
+            nCornersGatedOptionBOld = sum((cornerGatingsOptionBOld(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionBOld(i)));
+            nCornersGatedOptionBNew = sum((cornerGatingsOptionBNew(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionBNew(i)));
+
             percentageOfCorners(i) = (nCornersGated / nCorners) * 100;
+            percentageOfCornersOptionAOld(i) = (nCornersGatedOptionAOld / nCorners) * 100;
+            percentageOfCornersOptionAPotential(i) = (nCornersGatedOptionAPotential / nCorners) * 100;
+            percentageOfCornersOptionBOld(i) = (nCornersGatedOptionBOld / nCorners) * 100;
+            percentageOfCornersOptionBNew(i) = (nCornersGatedOptionBNew / nCorners) * 100;
 
             nCornersGated = sum(apexSpeeds.allTracks > cornerGatings(i));
+            nCornersGatedOptionAOld = sum(apexSpeeds.allTracks > cornerGatingsOptionAOld(i));
+            nCornersGatedOptionAPotential = sum(apexSpeeds.allTracks > cornerGatingsOptionAPotential(i));
+            nCornersGatedOptionBOld = sum(apexSpeeds.allTracks > cornerGatingsOptionBOld(i));
+            nCornersGatedOptionBNew = sum(apexSpeeds.allTracks > cornerGatingsOptionBNew(i));
+
             percentageOfCorners(i + 1) = (nCornersGated / nCorners) * 100;
+            percentageOfCornersOptionAOld(i + 1) = (nCornersGatedOptionAOld / nCorners) * 100;
+            percentageOfCornersOptionAPotential(i + 1) = (nCornersGatedOptionAPotential / nCorners) * 100;
+            percentageOfCornersOptionBOld(i + 1) = (nCornersGatedOptionBOld / nCorners) * 100;
+            percentageOfCornersOptionBNew(i + 1) = (nCornersGatedOptionBNew / nCorners) * 100;
         else
             nCornersGated = sum((cornerGatings(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatings(i)));
+            nCornersGatedOptionAOld = sum((cornerGatingsOptionAOld(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionAOld(i)));
+            nCornersGatedOptionAPotential = sum((cornerGatingsOptionAPotential(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionAPotential(i)));
+            nCornersGatedOptionBOld = sum((cornerGatingsOptionBOld(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionBOld(i)));
+            nCornersGatedOptionBNew = sum((cornerGatingsOptionBNew(i - 1) <= apexSpeeds.allTracks) & (apexSpeeds.allTracks < cornerGatingsOptionBNew(i)));
+
             percentageOfCorners(i) = (nCornersGated / nCorners) * 100;
+            percentageOfCornersOptionAOld(i) = (nCornersGatedOptionAOld / nCorners) * 100;
+            percentageOfCornersOptionAPotential(i) = (nCornersGatedOptionAPotential / nCorners) * 100;
+            percentageOfCornersOptionBOld(i) = (nCornersGatedOptionBOld / nCorners) * 100;
+            percentageOfCornersOptionBNew(i) = (nCornersGatedOptionBNew / nCorners) * 100;
         end
     end
+    disp('Original percentage distribution of corners')
     disp(percentageOfCorners)
+    disp('Old option A percentage distribution of corners')
+    disp(percentageOfCornersOptionAOld)
+    disp('Potential option A percentage distribution of corners')
+    disp(percentageOfCornersOptionAPotential)
+    disp('Old option B percentage distribution of corners')
+    disp(percentageOfCornersOptionBOld)
+    disp('New option B percentage distribution of corners')
+    disp(percentageOfCornersOptionBNew)
+    hold on
+    xline(cornerGatings, 'LineStyle', '--', 'Linewidth', 6, 'color', 'k')
+    % xline(cornerGatingsOptionAOld, 'LineStyle', '--', 'Linewidth', 6, 'color', 'b')
+    % xline(cornerGatingsOptionBNew, 'LineStyle', '--', 'Linewidth', 6, 'color', 'r')
+    ax = gca;
+    title('Histogram of Apex Speeds', 'FontSize', 40)
+    xlabel('vCar [kph]', 'FontSize', 32, 'FontWeight', 'bold')
+    ylabel('Number of Apex Points', 'FontSize', 32, 'FontWeight', 'bold')
+    ax.FontSize = 24;
+    grid on
 end
