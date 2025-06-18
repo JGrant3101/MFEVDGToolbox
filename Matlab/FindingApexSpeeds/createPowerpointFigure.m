@@ -84,17 +84,17 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
 
     %% Create the actual figure.
     figure
-    plot(trackEdges.xLeftEdge, trackEdges.yLeftEdge, 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot3(trackEdges.xLeftEdge, trackEdges.yLeftEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
     hold on
-    plot(trackEdges.xRightEdge, trackEdges.yRightEdge, 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot3(trackEdges.xRightEdge, trackEdges.yRightEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
 
     markerSize = 100;
     fontSize = 24;
 
-    baselineLS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
-    baselineMS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
-    baselineHS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
-    baselineVHS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
     view([0 90])
 
     axis equal
@@ -122,7 +122,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
             
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.68, 0.34, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.73, 0.4, 0.05, 0.08];
         case 'MEX'
             text(380, -40, 'T1', 'FontSize', fontSize);
             text(430, -160, 'T2', 'FontSize', fontSize);
@@ -150,7 +149,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.6, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.72, 0.66, 0.05, 0.08];
         case 'JED'
             text(-440, 140, 'T1', 'FontSize', fontSize);
             text(-485, 95, 'T2', 'FontSize', fontSize);
@@ -178,7 +176,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.7, 0.32, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.75, 0.38, 0.05, 0.08];
         case 'MIA'
             text(-360, 110, 'T1', 'FontSize', fontSize);
             text(-435, -90, 'T2', 'FontSize', fontSize);
@@ -202,7 +199,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.7, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.72, 0.76, 0.05, 0.08];
         case 'MCO'
             text(-260, -5, 'T1', 'FontSize', fontSize);
             text(20, 75, 'T2', 'FontSize', fontSize, 'Color', 'r');
@@ -230,7 +226,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.5, 0.3, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.55, 0.36, 0.05, 0.08];
         case 'TKO'
             text(-10, 240, 'T1', 'FontSize', fontSize);
             text(-100, 210, 'T2', 'FontSize', fontSize);
@@ -257,7 +252,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.32, 0.72, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.37, 0.78, 0.05, 0.08];
         case 'SHA'
             text(-465, -10, 'T1', 'FontSize', fontSize);
             text(-375, 50, 'T2', 'FontSize', fontSize);
@@ -278,7 +272,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.6, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.72, 0.66, 0.05, 0.08];
         case 'JAK'
             text(-340, -90, 'T1', 'FontSize', fontSize);
             text(-340, 30, 'T2', 'FontSize', fontSize);
@@ -305,7 +298,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.28, 0.56, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.33, 0.62, 0.05, 0.08];
         case 'BER'
             text(-300, 70, 'T1', 'FontSize', fontSize, 'Color', 'r');
             text(-415, 20, 'T2', 'FontSize', fontSize);
@@ -329,7 +321,6 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.22, 0.34, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.27, 0.4, 0.05, 0.08];
         case 'LDN'
             text(-180, 20, 'T1', 'FontSize', fontSize);
             text(-170, -60, 'T2', 'FontSize', fontSize);
@@ -358,48 +349,25 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
             baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
             legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.6, 0.15, 0.2], 'AutoUpdate', 'Off')
-            legendPos = [0.72, 0.66, 0.05, 0.08];
     end
 
     pause(6)
 
     delete(baselineTitle)
-    baselineLS.MarkerEdgeAlpha = 0;
-    baselineLS.MarkerFaceAlpha = 0;
-    baselineMS.MarkerEdgeAlpha = 0;
-    baselineMS.MarkerFaceAlpha = 0;
-    baselineHS.MarkerEdgeAlpha = 0;
-    baselineHS.MarkerFaceAlpha = 0;
-    baselineVHS.MarkerEdgeAlpha = 0;
-    baselineVHS.MarkerFaceAlpha = 0;
-
     optionATitle = text(optionX, optionY, 'Option A', 'FontSize', 32, 'FontWeight', 'bold', 'Color', 'b');
 
-    optionALS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
-    hold on
-    optionAMS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
-    optionAHS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
-    optionAVHS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
-    legend('', '', '', '', '', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', legendPos, 'AutoUpdate', 'Off')
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
 
     pause(3.5)
 
     delete(optionATitle)
-    optionALS.MarkerEdgeAlpha = 0;
-    optionALS.MarkerFaceAlpha = 0;
-    optionAMS.MarkerEdgeAlpha = 0;
-    optionAMS.MarkerFaceAlpha = 0;
-    optionAHS.MarkerEdgeAlpha = 0;
-    optionAHS.MarkerFaceAlpha = 0;
-    optionAVHS.MarkerEdgeAlpha = 0;
-    optionAVHS.MarkerFaceAlpha = 0;
-
     text(optionX, optionY, 'Option B', 'FontSize', 32, 'FontWeight', 'bold', 'Color', 'r');
 
-    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a')
-    hold on
-    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff')
-    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000')
-    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4')
-    legend('', '', '', '', '', '', '', '', '', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', legendPos, 'AutoUpdate', 'Off')
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a')
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff')
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000')
+    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4')
 end
