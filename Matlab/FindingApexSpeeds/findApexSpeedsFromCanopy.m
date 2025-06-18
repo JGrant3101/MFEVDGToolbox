@@ -437,10 +437,15 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot, bSave)
         % Adding these speeds to the allTracks field.
         apexSpeeds.allTracks = [apexSpeeds.allTracks; apexSpeedsKPH];
     end
+
+    %% Plot histograms.
+    % Plot a normal histogram for all tracks.
     % Define bin edge values for a histogram.
     binEdges = 40:5:185;
+    nBins = numel(binEdges) - 1;
 
     % Plot a histogram.
+    figure
     histogram(apexSpeeds.allTracks, binEdges)
 
     % Find the IQR for the data.
@@ -535,4 +540,52 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot, bSave)
     ylabel('Number of Apex Points', 'FontSize', 32, 'FontWeight', 'bold')
     ax.FontSize = 24;
     grid on
+
+    % Plot a stacked histogram for all circuits with each circuit
+    % represented with a unique colour.
+    figure
+    % Initialise an array that will be filled with the binned data for each
+    % track.
+    binnedDataByTrack = zeros(nBins, nTracks);
+    for i = 1:nTracks
+        % Get the apex speed data for the track.
+        trackCode = trackCodes{i};
+        trackApexSpeeds = apexSpeeds.(trackCode);
+
+        % Bin the track data based on the defined edges.
+        [trackBinnedData, ~] = histcounts(trackApexSpeeds, binEdges);
+        
+        % Assign the binned data for that track to the overall binned data
+        % array.
+        binnedDataByTrack(:, i) = trackBinnedData;
+    end
+
+    % Plot the data.
+    bar(binEdges(1:end-1) + 2.5, binnedDataByTrack, 'stacked', 'BarWidth', 1)
+    set(gca, 'colororder', jet(nTracks))
+    ax = gca;
+    legend(trackCodes)
+    legend(Direction = 'normal')
+    title('Histogram of Apex Speeds, Coloured by Track', 'FontSize', 40)
+    xlabel('vCar [kph]', 'FontSize', 32, 'FontWeight', 'bold')
+    ylabel('Number of Apex Points', 'FontSize', 32, 'FontWeight', 'bold')
+    ax.FontSize = 24;
+    grid on
+
+    % Plot a cumulative histogram.
+    figure
+    histogram(apexSpeeds.allTracks, binEdges, 'Normalization', 'cdf')
+    ax = gca;
+    title('CDF Histogram of Apex Speeds', 'FontSize', 40)
+    xlabel('vCar [kph]', 'FontSize', 32, 'FontWeight', 'bold')
+    ylabel('Cumulative Proportion of Apex Points', 'FontSize', 32, 'FontWeight', 'bold')
+    ax.FontSize = 24;
+    grid on
+    ylim([0, 1])
+    hold on
+    % xline(cornerGatings, 'LineStyle', '--', 'Linewidth', 6, 'color', 'k')
+    % xline(cornerGatingsOptionAOld, 'LineStyle', '--', 'Linewidth', 6, 'color', 'b')
+    xline(cornerGatingsOptionBNew, 'LineStyle', '--', 'Linewidth', 6, 'color', 'r')
+    
+
 end
