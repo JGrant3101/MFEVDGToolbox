@@ -84,17 +84,17 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
 
     %% Create the actual figure.
     figure
-    plot3(trackEdges.xLeftEdge, trackEdges.yLeftEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot(trackEdges.xLeftEdge, trackEdges.yLeftEdge, 'k', 'LineStyle', '--', 'LineWidth', 2);
     hold on
-    plot3(trackEdges.xRightEdge, trackEdges.yRightEdge, zeros(numel(trackEdges.yRightEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot(trackEdges.xRightEdge, trackEdges.yRightEdge, 'k', 'LineStyle', '--', 'LineWidth', 2);
 
     markerSize = 100;
     fontSize = 24;
 
-    baselineLS = scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
-    baselineMS = scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
-    baselineHS = scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
-    baselineVHS = scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
+    baselineLS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    baselineMS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    baselineHS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    baselineVHS = scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
     view([0 90])
 
     axis equal
