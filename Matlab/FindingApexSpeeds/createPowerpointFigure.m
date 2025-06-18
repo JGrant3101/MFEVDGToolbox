@@ -86,7 +86,7 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
     figure
     plot3(trackEdges.xLeftEdge, trackEdges.yLeftEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
     hold on
-    plot3(trackEdges.xRightEdge, trackEdges.yRightEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot3(trackEdges.xRightEdge, trackEdges.yRightEdge, zeros(numel(trackEdges.yRightEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
 
     markerSize = 100;
     fontSize = 24;
