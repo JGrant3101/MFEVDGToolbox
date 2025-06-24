@@ -49,7 +49,7 @@ function plottingPTyreWear(lapFilepath)
             % Form the channel you want to use to colour the plot.
             colourChannel = [channels2Plot{i}, tyres{j}];
             % Get the data for that channel.
-            colourChannelData = canopyData.(colourChannel);
+            colourChannelData = flip(canopyData.(colourChannel));
             % Run some logic for the units of the colour channel.
             switch channels2Plot{i}(1)
                 case 'P'
@@ -58,7 +58,9 @@ function plottingPTyreWear(lapFilepath)
             end
     
             % Plot.
-            scatter(canopyData.xCar, -canopyData.yCar, [], colourChannelData, 'Filled')
+            xCarForPlotting = flip(canopyData.xCar);
+            yCarForPlotting = -flip(canopyData.yCar);
+            scatter(xCarForPlotting, yCarForPlotting, [], colourChannelData, 'Filled')
             axis equal
             title(tyres{j})
             c = colorbar;
