@@ -9,8 +9,8 @@ function plottingETyreWearVStLap(folderPath)
 
     % Keep only the data about the CSVs in the folder.
     namesInFolder = folderContents.name;
-    binaryIndexing = cellfun(@keepCSVs, namesInFolder);
-    folderContents = folderContents(binaryIndexing, :);
+    bKeepCSVs = cellfun(@keepCSVs, namesInFolder);
+    folderContents = folderContents(bKeepCSVs, :);
 
     % Find the number of CSVs.
     nCSVs = numel(folderContents(:, 1));
@@ -57,13 +57,36 @@ function plottingETyreWearVStLap(folderPath)
         end
     end
 
-    a = 1;
+    %% Creating the plot.
+    % Initialise the figure.
+    figure
 
-    function output = keepCSVs(input)
-        if contains(input, 'csv')
-            output = true;
+    % Determine how many sections to divide the figure into.
+    tiles = determineGridsize(nCorners);
+    title(tiles, 'ETyreWearFL vs tLap', 'FontWeight', 'bold')
+
+    for i = 1:nCorners
+        nexttile
+        scatter(tLapForPlotting(:, i), ETyreWearFLForPlotting(:, i))
+    end
+
+
+    %% Additional functions.
+    function bKeepCSV = keepCSVs(filename)
+        if contains(filename, 'csv')
+            bKeepCSV = true;
         else
-            output = false;
+            bKeepCSV = false;
+        end
+    end
+
+    function tiles = determineGridsize(nCorners)
+        if nCorners < 13
+            tiles = tiledlayout(3, 4);
+        elseif (nCorners > 12) && (nCorners < 17)
+            tiles = tiledlayout(4, 4);
+        elseif (nCorners > 16)
+            tiles = tiledlayout(4, 5);
         end
     end
 

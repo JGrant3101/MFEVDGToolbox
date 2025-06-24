@@ -560,9 +560,15 @@ function findApexSpeedsFromCanopy(canopyCSVFilepaths, bPlot, bSave)
         binnedDataByTrack(:, i) = trackBinnedData;
     end
 
+    % Define the colour array.
+    colourArray = {'#006400', '#00008b', '#b03060', '#ff4500', '#ffff00', ...
+        '#00ff00', '#00ffff', '#ff00ff', '#6495ed', '#ffdab9'};
     % Plot the data.
-    bar(binEdges(1:end-1) + 2.5, binnedDataByTrack, 'stacked', 'BarWidth', 1)
-    set(gca, 'colororder', jet(nTracks))
+    bars = bar(binEdges(1:end-1) + 2.5, binnedDataByTrack, 'stacked', 'BarWidth', 1, 'FaceColor', 'flat');
+    for i = 1:nTracks
+        bars(i).CData = hex2rgb(colourArray{i});
+        bars(i).EdgeColor = 'none';
+    end
     ax = gca;
     legend(trackCodes)
     legend(Direction = 'normal')

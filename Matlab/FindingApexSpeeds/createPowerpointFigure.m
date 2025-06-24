@@ -84,18 +84,26 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
 
     %% Create the actual figure.
     figure
-    plot3(trackEdges.xLeftEdge, trackEdges.yLeftEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    % plot3(trackEdges.xLeftEdge, trackEdges.yLeftEdge, zeros(numel(trackEdges.yLeftEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    % hold on
+    % plot3(trackEdges.xRightEdge, trackEdges.yRightEdge, zeros(numel(trackEdges.yRightEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot(trackEdges.xLeftEdge, trackEdges.yLeftEdge, 'k', 'LineStyle', '--', 'LineWidth', 2);
     hold on
-    plot3(trackEdges.xRightEdge, trackEdges.yRightEdge, zeros(numel(trackEdges.yRightEdge), 1), 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot(trackEdges.xRightEdge, trackEdges.yRightEdge, 'k', 'LineStyle', '--', 'LineWidth', 2);
 
     markerSize = 100;
     fontSize = 24;
 
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
-    view([0 90])
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
+    % view([0 90])
+
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
 
     axis equal
     ax = gca;
@@ -104,270 +112,368 @@ function createPowerpointFigure(trackCode, cornerGatingsBaseline, cornerGatingsA
     % Add the corner number annotations and any NC points.
     switch trackCode
         case 'SAO'
-            text(-255, -10, 'T1', 'FontSize', fontSize);
-            text(-200, 50, 'T2', 'FontSize', fontSize);
-            text(-345, 60, 'T3', 'FontSize', fontSize);
-            text(290, 145, 'T4', 'FontSize', fontSize);
-            text(360, 55, 'T5', 'FontSize', fontSize);
-            text(365, 155, 'T6', 'FontSize', fontSize);
-            text(1030, 280, 'T7', 'FontSize', fontSize);
-            text(1040, 145, 'T8', 'FontSize', fontSize);
-            text(730, 150, 'T9', 'FontSize', fontSize, 'Color', 'r');
-            text(600, 130, 'T10', 'FontSize', fontSize);
-            text(580, 15, 'T11', 'FontSize', fontSize);
+            % Define the coordinates of the points to write the corner
+            % label text.
+            cornerLabelsArray = [-255, -10; -200, 50; -345, 60; 290, 145; ...
+                360, 55; 365, 155; 1030, 280; 1040, 145; 730, 150; 600, 130; ...
+                580, 15];
 
-            optionX = 300;
-            optionY = 280;
+            % Define where the NCs are.
+            NCs = 9;
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            % Define the coordinates of the point to write the title from.
+            titleX = 300;
+            titleY = 280;
             
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.68, 0.34, 0.15, 0.2], 'AutoUpdate', 'Off')
+            % Define the legend position.
+            legendPos = [0.2, 0.48, 0.15, 0.2];
+
+            % Define if there is a phantom apex or not.
+            bPhantom = 0;
+
+            % Define the positive and negative dimensions of the boxes to
+            % highlight which corners are changing category.
+            xFillPos = 50;
+            xFillPosLarge = 75;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 20;
+            yFillNeg = -20;
         case 'MEX'
-            text(380, -40, 'T1', 'FontSize', fontSize);
-            text(430, -160, 'T2', 'FontSize', fontSize);
-            text(380, -310, 'T3', 'FontSize', fontSize);
-            text(510, -370, 'T4', 'FontSize', fontSize);
-            text(560, -500, 'T5', 'FontSize', fontSize);
-            text(485, -500, 'T6', 'FontSize', fontSize);
-            text(460, -435, 'T7', 'FontSize', fontSize);
-            text(380, -385, 'T8', 'FontSize', fontSize, 'Color', 'r');
-            text(230, -350, 'T9', 'FontSize', fontSize);
-            text(210, -270, 'T10', 'FontSize', fontSize);
-            text(145, -285, 'T11', 'FontSize', fontSize);
-            text(0, -265, 'T12', 'FontSize', fontSize);
-            text(-35, -100, 'T13', 'FontSize', fontSize);
-            text(-100, -80, 'T14', 'FontSize', fontSize);
-            text(-170, -160, 'T15', 'FontSize', fontSize);
-            text(-105, -190, 'T16', 'FontSize', fontSize);
-            text(-90, -220, 'T17', 'FontSize', fontSize);
-            text(-95, -250, 'T18', 'FontSize', fontSize);
-            text(-260, -80, 'T19', 'FontSize', fontSize);
+            cornerLabelsArray = [380, -40; 430, -160; 380, -310; 510, -370; ...
+                560, -500; 485, -500; 460, -435; 380, -385; 230, -350; ...
+                210, -270; 145, -285; 0, -265; -35, -100; -100, -80; ...
+                -170, -160; -105, -190; -90, -220; -95, -250; -260, -80];
 
-            optionX = 80;
-            optionY = 30;
+            NCs = 8;            
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = 80;
+            titleY = 30;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.6, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.67, 0.6, 0.15, 0.2];
+
+            % Define if there is a phantom apex or not.
+            bPhantom = 1;
+
+            % If there is define it's number or there numbers.
+            phantomTurns = 5.5;
+
+            xFillPos = 35;
+            xFillPosLarge = 50;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 15;
+            yFillNeg = -15;
         case 'JED'
-            text(-440, 140, 'T1', 'FontSize', fontSize);
-            text(-485, 95, 'T2', 'FontSize', fontSize);
-            text(-550, 140, 'T3', 'FontSize', fontSize, 'Color', 'r');
-            text(-710, 130, 'T4', 'FontSize', fontSize);
-            text(-475, -20, 'T5', 'FontSize', fontSize);
-            text(-380, 15, 'T6', 'FontSize', fontSize);
-            text(-270, -15, 'T7', 'FontSize', fontSize, 'Color', 'r');
-            text(-45, -195, 'T8', 'FontSize', fontSize);
-            text(-25, -115, 'T9', 'FontSize', fontSize);
-            text(70, -150, 'T10', 'FontSize', fontSize);
-            text(40, -225, 'T11', 'FontSize', fontSize);
-            text(310, -230, 'T12', 'FontSize', fontSize, 'Color', 'r');
-            text(680, 0, 'T13', 'FontSize', fontSize);
-            text(430, 80, 'T14', 'FontSize', fontSize);
-            text(390, 0, 'T15', 'FontSize', fontSize);
-            text(340, 95, 'T16', 'FontSize', fontSize);
-            text(120, 60, 'T17', 'FontSize', fontSize);
-            text(100, 160, 'T18', 'FontSize', fontSize);
-            text(30, 70, 'T19', 'FontSize', fontSize);
+            cornerLabelsArray = [-440, 140; -485, 95; -550, 140; -710, 130; ...
+                -475, -20; -380, 15; -270, -15; -45, -195; -25, -115; ...
+                70, -150; 40, -225; 310, -230; 680, 0; 430, 80; 390, 0; ...
+                340, 95; 120, 60; 100, 160; 30, 70];
 
-            optionX = -80;
-            optionY = 230;
+            ax.XLim = ax.XLim + [0, 50];
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            NCs = [3, 7, 12];
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.7, 0.32, 0.15, 0.2], 'AutoUpdate', 'Off')
+            titleX = -80;
+            titleY = 230;
+
+            legendPos = [0.68, 0.32, 0.15, 0.2];
+
+            bPhantom = 0;
+
+            xFillPos = 50;
+            xFillPosLarge = 75;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 20;
+            yFillNeg = -20;
         case 'MIA'
-            text(-360, 110, 'T1', 'FontSize', fontSize);
-            text(-435, -90, 'T2', 'FontSize', fontSize);
-            text(-285, -140, 'T3', 'FontSize', fontSize);
-            text(-285, -30, 'T4', 'FontSize', fontSize);
-            text(-200, -20, 'T5', 'FontSize', fontSize);
-            text(235, 130, 'T6', 'FontSize', fontSize);
-            text(225, 20, 'T7', 'FontSize', fontSize);
-            text(-325, -250, 'T8', 'FontSize', fontSize);
-            text(-100, -280, 'T9', 'FontSize', fontSize, 'Color', 'r');
-            text(90, -190, 'T10', 'FontSize', fontSize);
-            text(25, -140, 'T11', 'FontSize', fontSize);
-            text(350, -30, 'T12', 'FontSize', fontSize);
-            text(360, 200, 'T13', 'FontSize', fontSize);
-            text(180, 250, 'T14', 'FontSize', fontSize);
-            text(230, 320, 'T15', 'FontSize', fontSize);
+            cornerLabelsArray = [-360, 110; -435, -90; -285, -140; -285, -30; ...
+                -200, -20; 235, 130; 225, 20; -325, -250; -100, -280; ...
+                90, -190; 25, -140; 350, -30; 360, 200; 180, 250; 230, 320];
 
-            optionX = -80;
-            optionY = 340;
+            NCs = 9;         
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = -80;
+            titleY = 340;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.7, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.67, 0.7, 0.15, 0.2];
+
+            bPhantom = 0;
+
+            xFillPos = 35;
+            xFillPosLarge = 50;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 15;
+            yFillNeg = -15;
         case 'MCO'
-            text(-260, -5, 'T1', 'FontSize', fontSize);
-            text(20, 75, 'T2', 'FontSize', fontSize, 'Color', 'r');
-            text(280, 160, 'T3', 'FontSize', fontSize);
-            text(150, 260, 'T4', 'FontSize', fontSize);
-            text(320, 480, 'T5', 'FontSize', fontSize);
-            text(380, 330, 'T6', 'FontSize', fontSize);
-            text(395, 410, 'T7', 'FontSize', fontSize);
-            text(470, 470, 'T8', 'FontSize', fontSize);
-            text(390, 120, 'T9', 'FontSize', fontSize, 'Color', 'r');
-            text(95, -10, 'T10', 'FontSize', fontSize);
-            text(15, -40, 'T11', 'FontSize', fontSize);
-            text(-170, -75, 'T12', 'FontSize', fontSize);
-            text(-190, -180, 'T13', 'FontSize', fontSize);
-            text(-160, -245, 'T14', 'FontSize', fontSize);
-            text(-145, -325, 'T15', 'FontSize', fontSize);
-            text(-150, -380, 'T16', 'FontSize', fontSize);
-            text(-110, -450, 'T17', 'FontSize', fontSize, 'Color', 'r');
-            text(-40, -510, 'T18', 'FontSize', fontSize);
-            text(-225, -530, 'T19', 'FontSize', fontSize);
+            cornerLabelsArray = [-260, -5; 20, 75; 280, 160; 150, 260; ...
+                320, 480; 380, 330; 395, 410; 470, 470; 390, 120; 95, -10; ...
+                15, -40; -170, -75; -190, -180; -160, -245; -145, -325; ...
+                -150, -380; -110, -450; -40, -510; -225, -530];
 
-            optionX = -120;
-            optionY = 380;
+            NCs = [2, 9, 17];           
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = -120;
+            titleY = 380;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.5, 0.3, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.5, 0.3, 0.15, 0.2];
+
+            bPhantom = 1;
+            phantomTurns = 10.5;
+
+            xFillPos = 50;
+            xFillPosLarge = 75;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 20;
+            yFillNeg = -20;
         case 'TKO'
-            text(-10, 240, 'T1', 'FontSize', fontSize);
-            text(-100, 210, 'T2', 'FontSize', fontSize);
-            text(-50, 280, 'T3', 'FontSize', fontSize);
-            text(40, 350, 'T4', 'FontSize', fontSize);
-            text(-50, 345, 'T5', 'FontSize', fontSize, 'Color', 'r');
-            text(-115, 320, 'T6', 'FontSize', fontSize);
-            text(-120, 420, 'T7', 'FontSize', fontSize);
-            text(-180, 420, 'T8', 'FontSize', fontSize);
-            text(-165, 120, 'T9', 'FontSize', fontSize);
-            text(-440, -155, 'T10', 'FontSize', fontSize);
-            text(-470, -95, 'T11', 'FontSize', fontSize);
-            text(-565, -140, 'T12', 'FontSize', fontSize);
-            text(-520, -290, 'T13', 'FontSize', fontSize, 'Color', 'r');
-            text(-520, -380, 'T14', 'FontSize', fontSize, 'Color', 'r');
-            text(-405, -520, 'T15', 'FontSize', fontSize);
-            text(-55, -290, 'T16', 'FontSize', fontSize);
-            text(-80, -125, 'T17', 'FontSize', fontSize);
-            text(-25, -185, 'T18', 'FontSize', fontSize);
+            cornerLabelsArray = [-10, 240; -100, 210; -50, 280; 40, 350; ...
+                -50, 345; -115, 320; -120, 420; -180, 420; -165, 120; ...
+                -440, -155; -470, -95; -565, -140; -520, -290; -520, -380; ...
+                -405, -520; -55, -290; -80, -125; -25, -185];
 
-            optionX = -420;
-            optionY = 380;
+            NCs = [5, 13, 14];         
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = -420;
+            titleY = 380;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.32, 0.72, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.32, 0.72, 0.15, 0.2];
+
+            bPhantom = 0;
+
+            xFillPos = 50;
+            xFillPosLarge = 70;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 20;
+            yFillNeg = -20;
         case 'SHA'
-            text(-465, -10, 'T1', 'FontSize', fontSize);
-            text(-375, 50, 'T2', 'FontSize', fontSize);
-            text(-320, 10, 'T3', 'FontSize', fontSize);
-            text(-250, 60, 'T4', 'FontSize', fontSize);
-            text(-500, 290, 'T5', 'FontSize', fontSize, 'Color', 'r');
-            text(-550, 570, 'T6', 'FontSize', fontSize);
-            text(-220, 220, 'T7', 'FontSize', fontSize);
-            text(-20, 460, 'T8', 'FontSize', fontSize);
-            text(75, 300, 'T9', 'FontSize', fontSize);
-            text(340, 170, 'T10', 'FontSize', fontSize);
-            text(245, 130, 'T11', 'FontSize', fontSize);
-            text(320, 70, 'T12', 'FontSize', fontSize);
+            cornerLabelsArray = [-465, -10; -375, 50; -320, 10; -250, 60; ...
+                -500, 290; -550, 570; -220, 220; -20, 460; 75, 300; ...
+                340, 170; 245, 130; 320, 70];
 
-            optionX = -200;
-            optionY = 540;
+            NCs = 5;         
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = -200;
+            titleY = 540;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.6, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.67, 0.6, 0.15, 0.2];
+
+            bPhantom = 0;
+
+            xFillPos = 40;
+            xFillPosLarge = 55;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 15;
+            yFillNeg = -15;
         case 'JAK'
-            text(-340, -90, 'T1', 'FontSize', fontSize);
-            text(-340, 30, 'T2', 'FontSize', fontSize);
-            text(-270, 30, 'T3', 'FontSize', fontSize);
-            text(-300, -60, 'T4', 'FontSize', fontSize);
-            text(-230, -70, 'T5', 'FontSize', fontSize);
-            text(-70, -50, 'T6', 'FontSize', fontSize, 'Color', 'r');
-            text(15, 10, 'T7', 'FontSize', fontSize);
-            text(-25, 60, 'T8', 'FontSize', fontSize);
-            text(45, 125, 'T9', 'FontSize', fontSize, 'Color', 'r');
-            text(90, 140, 'T10', 'FontSize', fontSize);
-            text(190, 190, 'T11', 'FontSize', fontSize);
-            text(280, 150, 'T12', 'FontSize', fontSize);
-            text(290, -130, 'T13', 'FontSize', fontSize);
-            text(250, -20, 'T14', 'FontSize', fontSize);
-            text(240, 60, 'T15', 'FontSize', fontSize);
-            text(165, 85, 'T16', 'FontSize', fontSize);
-            text(150, 45, 'T17', 'FontSize', fontSize);
-            text(220, -95, 'T18', 'FontSize', fontSize);
+            cornerLabelsArray = [-340, -90; -340, 30; -270, 30; -300, -60; ...
+                -230, -70; -70, -50; 15, 10; -25, 60; 45, 125; 90, 140; ...
+                190, 190; 280, 150; 290, -130; 250, -20; 240, 60; 165, 85; ...
+                150, 45; 220, -95];
 
-            optionX = -100;
-            optionY = 200;
+            NCs = [6, 9];           
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = -100;
+            titleY = 200;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.28, 0.56, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.28, 0.56, 0.15, 0.2];
+
+            bPhantom = 0;
+
+            xFillPos = 30;
+            xFillPosLarge = 45;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 10;
+            yFillNeg = -12;
         case 'BER'
-            text(-300, 70, 'T1', 'FontSize', fontSize, 'Color', 'r');
-            text(-415, 20, 'T2', 'FontSize', fontSize);
-            text(-280, -100, 'T3', 'FontSize', fontSize);
-            text(-215, -10, 'T4', 'FontSize', fontSize);
-            text(-40, -85, 'T5', 'FontSize', fontSize, 'Color', 'r');
-            text(220, -35, 'T6', 'FontSize', fontSize);
-            text(260, -85, 'T7', 'FontSize', fontSize);
-            text(60, -115, 'T8', 'FontSize', fontSize, 'Color', 'r');
-            text(-110, -125, 'T9', 'FontSize', fontSize);
-            text(-120, -175, 'T10', 'FontSize', fontSize);
-            text(190, -170, 'T11', 'FontSize', fontSize, 'Color', 'r');
-            text(390, -40, 'T12', 'FontSize', fontSize);
-            text(375, 30, 'T13', 'FontSize', fontSize);
-            text(290, 65, 'T14', 'FontSize', fontSize);
-            text(215, 40, 'T15', 'FontSize', fontSize);
+            cornerLabelsArray = [-300, 70; -415, 20; -280, -100; -215, -10; ...
+                -40, -85; 220, -35; 260, -85; 60, -115; -110, -125; ...
+                -120, -175; 190, -170; 390, -40; 375, 30; 290, 65; 215, 40];
 
-            optionX = -80;
-            optionY = 60;
+            NCs = [1, 5, 8, 11];          
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = -80;
+            titleY = 60;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.22, 0.34, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.22, 0.34, 0.15, 0.2];
+
+            bPhantom = 1;
+            phantomTurns = [6.5, 9.5];
+
+            xFillPos = 35;
+            xFillPosLarge = 50;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 10;
+            yFillNeg = -12;
         case 'LDN'
-            text(-180, 20, 'T1', 'FontSize', fontSize);
-            text(-170, -60, 'T2', 'FontSize', fontSize);
-            text(-250, 10, 'T3', 'FontSize', fontSize);
-            text(-250, -90, 'T4', 'FontSize', fontSize);
-            text(-300, -90, 'T5', 'FontSize', fontSize);
-            text(-280, 40, 'T6', 'FontSize', fontSize);
-            text(-340, 40, 'T7', 'FontSize', fontSize);
-            text(-335, 75, 'T8', 'FontSize', fontSize);
-            text(-320, 180, 'T9', 'FontSize', fontSize);
-            text(30, 210, 'T10', 'FontSize', fontSize);
-            text(30, 145, 'T11', 'FontSize', fontSize);
-            text(110, 145, 'T12', 'FontSize', fontSize);
-            text(110, 205, 'T13', 'FontSize', fontSize);
-            text(350, 155, 'T14', 'FontSize', fontSize, 'Color', 'r');
-            text(435, 80, 'T15', 'FontSize', fontSize, 'Color', 'r');
-            text(440, -30, 'T16', 'FontSize', fontSize);
-            text(300, 15, 'T17', 'FontSize', fontSize);
-            text(350, -50, 'T18', 'FontSize', fontSize);
-            text(115, -70, 'T19', 'FontSize', fontSize);
-            text(210, 0, 'T20', 'FontSize', fontSize);
+            cornerLabelsArray = [-180, 20; -170, -60; -250, 10; -250, -90; ...
+                -300, -90; -280, 40; -340, 40; -335, 75; -320, 180; 30, 210; ...
+                30, 145; 110, 145; 110, 205; 350, 155; 435, 80; 440, -30; 300, 15; ...
+                350, -50; 115, -70; 210, 0];
 
-            optionX = 0;
-            optionY = 260;
+            NCs = [14, 15];            
 
-            baselineTitle = text(optionX, optionY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+            titleX = 0;
+            titleY = 280;
 
-            legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', [0.67, 0.6, 0.15, 0.2], 'AutoUpdate', 'Off')
+            legendPos = [0.67, 0.6, 0.15, 0.2];
+
+            bPhantom = 1;
+            phantomTurns = 4.5;
+
+            xFillPos = 35;
+            xFillPosLarge = 50;
+            xFillNeg = -2;
+            xFillNegLarge = -2;
+            yFillPos = 15;
+            yFillNeg = -15;
     end
 
-    pause(6)
+    % Define the number of corners.
+    NCorners = numel(cornerLabelsArray(:, 1));
+    % Initialise an empty cell array for the corner type with NC included.
+    cornerTypes = cell(NCorners, 3);
+    % Initialise the offset to apply for NCs as 0.
+    offsetNC = 0;
+    % Initialise the number of highlights required for both option A and
+    % option B.
+    nFillA = 0;
+    nFillB = 0;
+
+    % Create the corner labels.
+    for i = 1:NCorners
+        if bPhantom 
+            for j = 1:numel(phantomTurns)
+                if ((i - 1) < phantomTurns(j)) && (i > phantomTurns(j))
+                    offsetNC = offsetNC - 1;
+                end
+            end
+        end
+        if any(NCs == i)
+            text(cornerLabelsArray(i, 1), cornerLabelsArray(i, 2), ['T', num2str(i)], 'FontSize', fontSize, 'Color', 'r');
+            cornerTypes{i, 1} = 'NC';
+            cornerTypes{i, 2} = 'NC';
+            cornerTypes{i, 3} = 'NC';
+
+            offsetNC = offsetNC + 1;
+        else
+            text(cornerLabelsArray(i, 1), cornerLabelsArray(i, 2), ['T', num2str(i)], 'FontSize', fontSize);
+            cornerTypes{i, 1} = apexPoints.cornerTypeBaseline{i - offsetNC};
+            cornerTypes{i, 2} = apexPoints.cornerTypeA{i - offsetNC};
+            cornerTypes{i, 3} = apexPoints.cornerTypeB{i - offsetNC};
+
+            if ~strcmp(cornerTypes{i, 1}, cornerTypes{i, 2})
+                nFillA = nFillA + 1;
+            end
+
+            if ~strcmp(cornerTypes{i, 1}, cornerTypes{i, 3})
+                nFillB = nFillB + 1;
+            end
+        end
+    end 
+
+    % Define the number of corners for plotting purposes.
+    NCornersPlot = numel(cornerTypes(:, 1));
+
+    baselineTitle = text(titleX, titleY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
+
+    legend('', '', 'LS', 'MS', 'HS', 'VHS', 'FontSize', 16, 'Position', legendPos, 'AutoUpdate', 'Off')
+
+    axis manual
+
+    pause(8)
 
     delete(baselineTitle)
-    optionATitle = text(optionX, optionY, 'Option A', 'FontSize', 32, 'FontWeight', 'bold', 'Color', 'b');
+    optionATitle = text(titleX, titleY, 'Option A', 'FontSize', 32, 'FontWeight', 'bold', 'Color', 'b');
 
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeA, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
 
-    pause(3.5)
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeA, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeA, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
 
+    xFillA = zeros(4, nFillA);
+    yFillA = zeros(4, nFillA);
+    fillCounter = 1;
+
+    for i = 1:NCorners
+        if ~strcmp(cornerTypes{i, 1}, cornerTypes{i, 2})
+            if i < 10
+                xFillA(:, fillCounter) = [cornerLabelsArray(i, 1) + xFillNeg; cornerLabelsArray(i, 1) + xFillPos; cornerLabelsArray(i, 1) + xFillPos; cornerLabelsArray(i, 1) + xFillNeg];
+                yFillA(:, fillCounter) = [cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillPos; cornerLabelsArray(i, 2) + yFillPos];
+
+                fillCounter = fillCounter + 1;
+            else
+                xFillA(:, fillCounter) = [cornerLabelsArray(i, 1) + xFillNegLarge; cornerLabelsArray(i, 1) + xFillPosLarge; cornerLabelsArray(i, 1) + xFillPosLarge; cornerLabelsArray(i, 1) + xFillNegLarge];
+                yFillA(:, fillCounter) = [cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillPos; cornerLabelsArray(i, 2) + yFillPos];
+
+                fillCounter = fillCounter + 1;
+            end 
+        end
+    end
+
+    fillA = fill(xFillA, yFillA, hex2rgb('#ff8000'), 'FaceAlpha', 0.5, 'EdgeColor', 'none');
+
+    pause(2)
     delete(optionATitle)
-    text(optionX, optionY, 'Option B', 'FontSize', 32, 'FontWeight', 'bold', 'Color', 'r');
+    delete(fillA)
+    baselineTitle2 = text(titleX, titleY, 'Baseline', 'FontSize', 32, 'FontWeight', 'bold');
 
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a')
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff')
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000')
-    scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4')
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
+
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000');
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeBaseline, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4');
+
+    pause(2)
+
+    delete(baselineTitle2)
+    optionBTitle2 = text(titleX, titleY, 'Option B', 'FontSize', 32, 'FontWeight', 'bold', 'Color', 'r');
+
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a')
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff')
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000')
+    % scatter3(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.sLap(strcmp(apexPoints.cornerTypeB, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4')
+
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'LS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'LS')), markerSize, 'filled', 'MarkerFaceColor', '#53565a')
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'MS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'MS')), markerSize, 'filled', 'MarkerFaceColor', '#33b1ff')
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'HS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'HS')), markerSize, 'filled', 'MarkerFaceColor', '#ff8000')
+    scatter(apexPoints.xCar(strcmp(apexPoints.cornerTypeB, 'VHS')), apexPoints.yCar(strcmp(apexPoints.cornerTypeB, 'VHS')), markerSize, 'filled', 'MarkerFaceColor', '#ff33e4')
+
+    xFillB = zeros(4, nFillB);
+    yFillB = zeros(4, nFillB);
+    fillCounter = 1;
+
+    for i = 1:NCorners
+        if ~strcmp(cornerTypes{i, 1}, cornerTypes{i, 3})
+            if i < 10
+                xFillB(:, fillCounter) = [cornerLabelsArray(i, 1) + xFillNeg; cornerLabelsArray(i, 1) + xFillPos; cornerLabelsArray(i, 1) + xFillPos; cornerLabelsArray(i, 1) + xFillNeg];
+                yFillB(:, fillCounter) = [cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillPos; cornerLabelsArray(i, 2) + yFillPos];
+
+                fillCounter = fillCounter + 1;
+            else
+                xFillB(:, fillCounter) = [cornerLabelsArray(i, 1) + xFillNegLarge; cornerLabelsArray(i, 1) + xFillPosLarge; cornerLabelsArray(i, 1) + xFillPosLarge; cornerLabelsArray(i, 1) + xFillNegLarge];
+                yFillB(:, fillCounter) = [cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillNeg; cornerLabelsArray(i, 2) + yFillPos; cornerLabelsArray(i, 2) + yFillPos];
+
+                fillCounter = fillCounter + 1;
+            end 
+        end
+    end
+
+    fill(xFillB, yFillB, hex2rgb('#ff8000'), 'FaceAlpha', 0.5, 'EdgeColor', 'none');
 end
