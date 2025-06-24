@@ -1,0 +1,17 @@
+name: ✨ Feature
+description: A high-level piece of functionality to be decomposed.
+title: "✨ "
+type: 'Feature'
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: Provide a detailed explanation of the work to be done, including the purpose, functionality, and any relevant background information.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Acceptance Criteria
+    description: Defines the conditions that must be met for the Feature to be considered complete. These are measurable and testable outcomes.
+  validations:
+    required: false

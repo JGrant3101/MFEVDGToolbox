@@ -1,0 +1,35 @@
+name: 🔎 Investigation
+description: An investigation to gain some learning (could be small or large).
+title: "🔎 "
+type: 'Investigation'
+body:
+- type: textarea
+  attributes:
+    label: Action
+    description: Explain what needs to be done.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Purpose
+    description: Explain why this is necessary.
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Time Allocated
+    description: Be clear about how much time is required and if necessary give some justification.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Acceptance Criteria
+    description: Describe what a successful outcome for the investigation would be, including what documentation is expected.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Findings
+    description: Summarise key findings or provide a link to the findings.
+  validations:
+    required: false

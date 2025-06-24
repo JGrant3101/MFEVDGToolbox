@@ -1,0 +1,17 @@
+name: 🚀 Enhancement
+description: A request, idea, or new functionality.
+title: "🚀 "
+type: 'Enhancement'
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: Provide a detailed explanation of the work to be done, including the purpose, functionality, and any relevant background information.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Acceptance Criteria
+    description: Defines the conditions that must be met for the Enhancement to be considered complete by a user. These are measurable and testable outcomes.
+  validations:
+    required: false

@@ -1,0 +1,35 @@
+name: 💩 Tech Debt
+description: For future refactoring.
+title: "💩 "
+type: 'Tech Debt'
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: A clear and concise explanation of the technical debt.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Reason
+    description: Why the debt was introduced (e.g., time constraints, lack of expertise).
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Impact
+    description: How the debt affects the system or project (performance, maintainability, etc.).
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Chance
+    description: The chance that the debt will cause problems if not addressed.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Consequences
+    description: Long-term risks if the debt is not addressed.
+  validations:
+    required: false

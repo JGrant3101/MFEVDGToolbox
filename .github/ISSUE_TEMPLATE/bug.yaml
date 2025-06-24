@@ -1,0 +1,45 @@
+name: 🐛 Bug
+description: An unexpected problem or behavior.
+title: "🐛 "
+type: 'Bug'
+body:
+- type: textarea
+  attributes:
+    label: Current Behaviour
+    description: A concise description of what the user experienced.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Expected Behaviour
+    description: A concise description of what the user expected to happen.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Steps To Reproduce
+    description: Steps to reproduce the behaviour.
+    placeholder: |
+      e.g.
+      1. In this environment...
+      2. With this config...
+      3. Run '...'
+      4. See error...
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Screenshots
+    description: |
+      If applicable, add screenshots to help explain the problem.
+      Tip: You can attach images by clicking this area to highlight it and then dragging files in.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Additional Context
+    description: |
+      Add any other context about the problem here.
+      Tip: You can attach files by clicking this area to highlight it and then dragging files in.
+  validations:
+    required: false

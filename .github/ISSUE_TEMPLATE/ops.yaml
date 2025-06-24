@@ -1,0 +1,11 @@
+name: 🔨 Ops
+description: A piece of operational or support work
+title: "🔨 "
+type: 'Ops'
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: Provide a detailed explanation of the work to be done, including the purpose, functionality, and any relevant background information.
+  validations:
+    required: false

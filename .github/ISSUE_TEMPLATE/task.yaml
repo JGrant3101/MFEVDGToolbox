@@ -1,0 +1,11 @@
+name: ✅ Task
+description: A non-specific piece of work, often used to break down larger tasks.
+title: "✅ "
+type: 'Task'
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: Provide a description of what needs to be done.
+  validations:
+    required: false

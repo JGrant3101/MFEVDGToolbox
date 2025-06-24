@@ -1,0 +1,11 @@
+name: 📝 Project
+description: A top level grouping of work which delivers a set of features (typically less than 3 months).
+title: "📝 "
+type: 'Project'
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: Provide a high level description of the Project.
+  validations:
+    required: false
