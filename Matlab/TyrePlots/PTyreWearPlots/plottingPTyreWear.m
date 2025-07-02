@@ -1,6 +1,7 @@
 function plottingPTyreWear(lapFilepath)
     % Function to produce a plot, for each corner of the car, of the
     % PTyreWear channel as it varies around the lap.
+    % Line to run the script with: all_fig = findall(0, 'type', 'figure'); close(all_fig); plottingPTyreWear(FILEPATH)
     format long
     %% Import the CSV.
     % Define the required channels.
@@ -20,16 +21,21 @@ function plottingPTyreWear(lapFilepath)
     % Define unit conversion factors.
     W_TO_kW = 1/1000;
 
+    % Initialising the figure with multiple tabs.
     fig = uifigure('Name', 'Circuit plots');
-    tabGroup = uitabgroup(fig, 'Position', [0, 0, 1, 1]);
+    fig.AutoResizeChildren = 'on';
+    tabGroup = uitabgroup(fig, 'Units', 'normalized', 'Position', [0, 0, 1, 1]);
+
+    % Defining sizing values for the plots.
+    titleFontSize = 24;
+    markerSize = 80;
 
     % Run a for loop over each corner. (Could also loop over each of the
     % channels you want to plot if there are multiple of those)
     for i = 1:numel(channels2Plot)
         tab = uitab(tabGroup, 'title', channels2Plot{i});
-        % ax = axes('Parent', tab);
         tiles = tiledlayout(tab, 2, 2);
-        title(tiles, channels2Plot{i}, 'FontWeight', 'bold', 'Interpreter', 'none')
+        title(tiles, channels2Plot{i}, 'FontWeight', 'bold', 'FontSize', titleFontSize, 'Interpreter', 'none')
         
         % Find the min and max of the channel across all 4 tyre corners.
         colourMin = min([min(canopyData.([channels2Plot{i}, 'FL'])), ...
@@ -55,6 +61,7 @@ function plottingPTyreWear(lapFilepath)
         end
 
         for j = 1:numel(tyres)
+            % Get the parent axes for the particular plot.
             ax = nexttile(tiles);
             % Form the channel you want to use to colour the plot.
             colourChannel = [channels2Plot{i}, tyres{j}];
@@ -73,9 +80,18 @@ function plottingPTyreWear(lapFilepath)
             % Plot.
             xCarForPlotting = flip(canopyData.xCar);
             yCarForPlotting = -flip(canopyData.yCar);
-            scatter(ax, xCarForPlotting, yCarForPlotting, [], colourChannelData, 'Filled')
-            % axis equal
+            scatter(ax, xCarForPlotting, yCarForPlotting, markerSize, colourChannelData, 'Filled')
+            % Manually set the properties to recreate axis equal as matlab
+            % doesn't like running that command with the tabs and tiles.
+            ax.DataAspectRatio = [1, 1, 1];
+            ax.DataAspectRatioMode = 'manual';
+            ax.PlotBoxAspectRatioMode = 'manual';
+            ax.XLimMode = 'auto';
+            ax.YLimMode = 'auto';
+            ax.XLimitMethod = 'tight';
+            ax.YLimitMethod = 'tight';
             title(ax, tyres{j})
+            % Set the colorbar with the limits found earlier.
             c = colorbar(ax);
             clim(ax, [colourMin, colourMax])
             c.Label.String = [colourChannel, units];
