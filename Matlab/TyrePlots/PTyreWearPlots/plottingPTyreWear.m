@@ -20,14 +20,14 @@ function plottingPTyreWear(lapFilepath)
     % Define unit conversion factors.
     W_TO_kW = 1/1000;
 
-    figure
+    fig = uifigure('Name', 'Circuit plots');
+    tabGroup = uitabgroup(fig, 'Position', [0, 0, 1, 1]);
 
     % Run a for loop over each corner. (Could also loop over each of the
     % channels you want to plot if there are multiple of those)
     for i = 1:numel(channels2Plot)
-        % Initialise the figure.
-        % figure('Name', channels2Plot{i}, 'NumberTitle', 'off')
-        tab = uitab('title', channels2Plot{i});
+        tab = uitab(tabGroup, 'title', channels2Plot{i});
+        % ax = axes('Parent', tab);
         tiles = tiledlayout(tab, 2, 2);
         title(tiles, channels2Plot{i}, 'FontWeight', 'bold', 'Interpreter', 'none')
         
@@ -55,8 +55,7 @@ function plottingPTyreWear(lapFilepath)
         end
 
         for j = 1:numel(tyres)
-            nexttile
-            ax = gca;
+            ax = nexttile(tiles);
             % Form the channel you want to use to colour the plot.
             colourChannel = [channels2Plot{i}, tyres{j}];
             % Get the data for that channel.
@@ -75,13 +74,12 @@ function plottingPTyreWear(lapFilepath)
             xCarForPlotting = flip(canopyData.xCar);
             yCarForPlotting = -flip(canopyData.yCar);
             scatter(ax, xCarForPlotting, yCarForPlotting, [], colourChannelData, 'Filled')
-            axis equal
-            title(tyres{j})
-            c = colorbar;
-            clim([colourMin, colourMax])
+            % axis equal
+            title(ax, tyres{j})
+            c = colorbar(ax);
+            clim(ax, [colourMin, colourMax])
             c.Label.String = [colourChannel, units];
-            % Define the colourmap.
-            colormap jet
+            c.Label.Interpreter = 'none';
         end
     end
 end
